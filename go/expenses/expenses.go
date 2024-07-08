@@ -1,6 +1,7 @@
 package expenses
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -61,18 +62,10 @@ func TotalByPeriod(in []Record, p DaysPeriod) float64 {
 // An error must be returned only if there are no records in the list that belong
 // to the given category, regardless of period of time.
 func CategoryExpenses(in []Record, p DaysPeriod, c string) (float64, error) {
-	categoryPresent := false
-	categoryCheck := ByCategory(c)
-	for _, record := range in {
-		categoryPresent = categoryCheck(record)
-		if categoryPresent {
-			break
-		}
+	recordsByCategory := Filter(in, ByCategory(c))
+	if len(recordsByCategory) == 0 {
+		return 0, errors.New("unknown category")
 	}
-	if !categoryPresent {
-		return 0.0, fmt.Errorf("unknown category %s", c)
-	}
-	recordsByCategory := Filter(in, categoryCheck)
 	recordsInPeriod := Filter(recordsByCategory,ByDaysPeriod(p))
 	var total float64
 	for _, record := range recordsInPeriod {
