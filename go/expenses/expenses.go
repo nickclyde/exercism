@@ -2,7 +2,6 @@ package expenses
 
 import (
 	"errors"
-	"fmt"
 )
 
 // Record represents an expense record.
@@ -21,7 +20,7 @@ type DaysPeriod struct {
 // Filter returns the records for which the predicate function returns true.
 func Filter(in []Record, predicate func(Record) bool) []Record {
 	var matches []Record
-	for _, record:= range in {
+	for _, record := range in {
 		if predicate(record) {
 			matches = append(matches, record)
 		}
@@ -66,11 +65,10 @@ func CategoryExpenses(in []Record, p DaysPeriod, c string) (float64, error) {
 	if len(recordsByCategory) == 0 {
 		return 0, errors.New("unknown category")
 	}
-	recordsInPeriod := Filter(recordsByCategory,ByDaysPeriod(p))
+	recordsInPeriod := Filter(recordsByCategory, ByDaysPeriod(p))
 	var total float64
 	for _, record := range recordsInPeriod {
 		total += record.Amount
 	}
 	return total, nil
 }
-
